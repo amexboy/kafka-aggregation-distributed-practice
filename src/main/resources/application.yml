@@ -1,0 +1,49 @@
+spring:
+  application.name: kafka-streams-aggregate-sample-${random.uuid}
+  cloud:
+    stream:
+      function.definition: positions
+      kafka:
+        streams:
+          binder:
+            functions:
+#              balances:
+#                application-id: enrich-balances
+              positions:
+                application-id: agg-daily-positions-s
+
+  cloud.stream:
+    kafka.streams.binder:
+      configuration:
+        spring.json.trusted.packages: "com.amanu.pracitce.kafastreamspractice.domain,java.time"
+        default.key.serde: org.springframework.kafka.support.serializer.JsonSerde
+        default.value.serde: org.springframework.kafka.support.serializer.JsonSerde
+        commit.interval.ms: 1000
+    bindings:
+#      balances-in-0:
+#        destination: ${test.input}
+#      balances-out-0:
+#        destination: ${test.balances.output}
+      positions-in-0:
+        destination: ${test.balances.output}
+      positions-out-0:
+        destination: ${test.positions.output}
+
+
+  kafka:
+    consumer:
+      properties:
+        spring.json.trusted.packages: "com.amanu.pracitce.kafastreamspractice.domain,java.time"
+      auto-offset-reset: earliest
+      group-id: kafa-test
+
+test:
+  input: input
+  balances.output: account_eod_balance
+  positions.output: daily_positions
+
+logging:
+ level:
+  ROOT: warn
+  com.amanu: info
+
